@@ -1,0 +1,53 @@
+// Build the simdutf single translation unit (src/simdutf.cpp includes the
+// per-architecture kernels) as a shared library. Used to accelerate the
+// libutils UTF-8<->UTF-16 conversions on the binder Parcel and androidfw
+// resource-decoding paths (see system/core/libutils Unicode.cpp).
+
+package {
+    default_applicable_licenses: ["external_simdutf_license"],
+}
+
+license {
+    name: "external_simdutf_license",
+    visibility: [":__subpackages__"],
+    license_kinds: [
+        "SPDX-license-identifier-Apache-2.0",
+        "SPDX-license-identifier-MIT",
+    ],
+    license_text: [
+        "LICENSE-APACHE",
+        "LICENSE-MIT",
+    ],
+}
+
+cc_library_static {
+    name: "libsimdutf",
+    srcs: ["src/simdutf.cpp"],
+    export_include_dirs: ["include"],
+    local_include_dirs: ["src"],
+
+    vendor_available: true,
+    product_available: true,
+    recovery_available: true,
+    ramdisk_available: true,
+    vendor_ramdisk_available: true,
+    native_bridge_supported: true,
+    min_sdk_version: "apex_inherit",
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+
+    cpp_std: "c++17",
+    rtti: false,
+    cflags: [
+        "-O3",
+        "-fvisibility=hidden",
+        "-fvisibility-inlines-hidden",
+        "-Wno-error",
+        "-Wno-unused-function",
+        "-Wno-unused-parameter",
+        "-Wno-unused-variable",
+        "-Wno-implicit-fallthrough",
+    ],
+}
